@@ -1,7 +1,5 @@
 import java.util.Scanner;
 
-import java.util.Scanner;
-
 public class Mang {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
@@ -18,92 +16,112 @@ public class Mang {
         while (true) {
             String input = sc.nextLine().trim();
 
-            // Exit
-            if (input.equals("bye")) {
-                System.out.println("____________________________________________________________");
-                System.out.println(" Bye. Hope to see you again soon!");
-                System.out.println("____________________________________________________________");
-                break;
-
-            } else if (input.equals("list")) {
-                System.out.println("____________________________________________________________");
-                System.out.println(" Here are the tasks in your list:");
-                for (int i = 0; i < count; i++) {
-                    System.out.println(" " + (i + 1) + "." + tasks[i]);
-                }
-                System.out.println("____________________________________________________________");
-
-            } else if (input.startsWith("mark ")) {
-                int idx = Integer.parseInt(input.substring(5).trim());
-                if (idx >= 1 && idx <= count) {
-                    tasks[idx - 1].markDone();
+            try {
+                // Exit
+                if (input.equals("bye")) {
                     System.out.println("____________________________________________________________");
-                    System.out.println(" Nice! I've marked this task as done:");
-                    System.out.println("   " + tasks[idx - 1]);
+                    System.out.println(" Bye. Hope to see you again soon!");
                     System.out.println("____________________________________________________________");
-                }
+                    break;
 
-            } else if (input.startsWith("unmark ")) {
-                int idx = Integer.parseInt(input.substring(7).trim());
-                if (idx >= 1 && idx <= count) {
-                    tasks[idx - 1].markUndone();
+                } else if (input.equals("list")) {
                     System.out.println("____________________________________________________________");
-                    System.out.println(" OK, I've marked this task as not done yet:");
-                    System.out.println("   " + tasks[idx - 1]);
+                    System.out.println(" Here are the tasks in your list:");
+                    for (int i = 0; i < count; i++) {
+                        System.out.println(" " + (i + 1) + "." + tasks[i]);
+                    }
                     System.out.println("____________________________________________________________");
-                }
 
-            } else if (input.startsWith("todo ")) {
-                String desc = input.substring(5).trim();
-                tasks[count] = new Todo(desc);
-                count++;
-                System.out.println("____________________________________________________________");
-                System.out.println(" Got it. I've added this task:");
-                System.out.println("   " + tasks[count - 1]);
-                System.out.println(" Now you have " + count + " tasks in the list.");
-                System.out.println("____________________________________________________________");
+                } else if (input.startsWith("mark ")) {
+                    int idx = Integer.parseInt(input.substring(5).trim());
+                    if (idx >= 1 && idx <= count) {
+                        tasks[idx - 1].markDone();
+                        System.out.println("____________________________________________________________");
+                        System.out.println(" Nice! I've marked this task as done:");
+                        System.out.println("   " + tasks[idx - 1]);
+                        System.out.println("____________________________________________________________");
+                    } else {
+                        throw new IllegalArgumentException("Task number " + idx + " does not exist.");
+                    }
 
-            } else if (input.startsWith("deadline ")) {
-                String[] parts = input.substring(9).split("/by", 2);
-                String desc = parts[0].trim();
-                String by = (parts.length > 1) ? parts[1].trim() : "unspecified";
-                tasks[count] = new Deadline(desc, by);
-                count++;
-                System.out.println("____________________________________________________________");
-                System.out.println(" Got it. I've added this task:");
-                System.out.println("   " + tasks[count - 1]);
-                System.out.println(" Now you have " + count + " tasks in the list.");
-                System.out.println("____________________________________________________________");
+                } else if (input.startsWith("unmark ")) {
+                    int idx = Integer.parseInt(input.substring(7).trim());
+                    if (idx >= 1 && idx <= count) {
+                        tasks[idx - 1].markUndone();
+                        System.out.println("____________________________________________________________");
+                        System.out.println(" OK, I've marked this task as not done yet:");
+                        System.out.println("   " + tasks[idx - 1]);
+                        System.out.println("____________________________________________________________");
+                    } else {
+                        throw new IllegalArgumentException("Task number " + idx + " does not exist.");
+                    }
 
-            } else if (input.startsWith("event ")) {
-                String[] parts = input.substring(6).split("/from|/to");
-                if (parts.length >= 3) {
-                    String desc = parts[0].trim();
-                    String from = parts[1].trim();
-                    String to = parts[2].trim();
-                    tasks[count] = new Event(desc, from, to);
-                } else {
-                    tasks[count] = new Event(input.substring(6).trim(), "unspecified", "unspecified");
-                }
-                count++;
-                System.out.println("____________________________________________________________");
-                System.out.println(" Got it. I've added this task:");
-                System.out.println("   " + tasks[count - 1]);
-                System.out.println(" Now you have " + count + " tasks in the list.");
-                System.out.println("____________________________________________________________");
-
-            } else {
-                if (count < 100) {
-                    tasks[count] = new Task(input);
+                } else if (input.startsWith("todo")) {
+                    String desc = input.length() > 4 ? input.substring(4).trim() : "";
+                    if (desc.isEmpty()) {
+                        throw new IllegalArgumentException("The description of a todo cannot be empty.");
+                    }
+                    tasks[count] = new Todo(desc);
                     count++;
                     System.out.println("____________________________________________________________");
-                    System.out.println(" added: " + input);
+                    System.out.println(" Got it. I've added this task:");
+                    System.out.println("   " + tasks[count - 1]);
+                    System.out.println(" Now you have " + count + " tasks in the list.");
                     System.out.println("____________________________________________________________");
+
+                } else if (input.startsWith("deadline")) {
+                    String rest = input.length() > 8 ? input.substring(8).trim() : "";
+                    if (rest.isEmpty()) {
+                        throw new IllegalArgumentException("The description of a deadline cannot be empty.");
+                    }
+                    String[] parts = rest.split("/by", 2);
+                    String desc = parts[0].trim();
+                    String by = (parts.length > 1) ? parts[1].trim() : "unspecified";
+                    tasks[count] = new Deadline(desc, by);
+                    count++;
+                    System.out.println("____________________________________________________________");
+                    System.out.println(" Got it. I've added this task:");
+                    System.out.println("   " + tasks[count - 1]);
+                    System.out.println(" Now you have " + count + " tasks in the list.");
+                    System.out.println("____________________________________________________________");
+
+                } else if (input.startsWith("event")) {
+                    String rest = input.length() > 5 ? input.substring(5).trim() : "";
+                    if (rest.isEmpty()) {
+                        throw new IllegalArgumentException("The description of an event cannot be empty.");
+                    }
+                    String[] parts = rest.split("/from|/to");
+                    if (parts.length >= 3) {
+                        String desc = parts[0].trim();
+                        String from = parts[1].trim();
+                        String to = parts[2].trim();
+                        tasks[count] = new Event(desc, from, to);
+                    } else {
+                        tasks[count] = new Event(rest, "unspecified", "unspecified");
+                    }
+                    count++;
+                    System.out.println("____________________________________________________________");
+                    System.out.println(" Got it. I've added this task:");
+                    System.out.println("   " + tasks[count - 1]);
+                    System.out.println(" Now you have " + count + " tasks in the list.");
+                    System.out.println("____________________________________________________________");
+
                 } else {
-                    System.out.println("____________________________________________________________");
-                    System.out.println(" Sorry, I can only store up to 100 items.");
-                    System.out.println("____________________________________________________________");
+                    throw new UnsupportedOperationException("Unknown command: " + input);
                 }
+
+            } catch (NumberFormatException e) {
+                System.out.println("____________________________________________________________");
+                System.out.println(" OOPS! That does not look like a valid number.");
+                System.out.println("____________________________________________________________");
+            } catch (IllegalArgumentException | UnsupportedOperationException e) {
+                System.out.println("____________________________________________________________");
+                System.out.println(" " + e.getMessage());
+                System.out.println("____________________________________________________________");
+            } catch (Exception e) {
+                System.out.println("____________________________________________________________");
+                System.out.println(" Unexpected error: " + e.getMessage());
+                System.out.println("____________________________________________________________");
             }
         }
 
