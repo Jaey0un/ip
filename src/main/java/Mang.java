@@ -106,6 +106,32 @@ public class Mang {
                     System.out.println(" Now you have " + count + " tasks in the list.");
                     System.out.println("____________________________________________________________");
 
+                } else if (input.startsWith("delete ")) {
+                    try {
+                        int idx = Integer.parseInt(input.substring(7).trim());
+                        if (idx < 1 || idx > count) {
+                            throw new IllegalArgumentException("Task number " + idx + " does not exist.");
+                        }
+                        Task removed = tasks[idx - 1];
+
+                        // shift tasks left
+                        for (int i = idx - 1; i < count - 1; i++) {
+                            tasks[i] = tasks[i + 1];
+                        }
+                        tasks[count - 1] = null;
+                        count--;
+
+                        System.out.println("____________________________________________________________");
+                        System.out.println(" Noted. I've removed this task:");
+                        System.out.println("   " + removed);
+                        System.out.println(" Now you have " + count + " tasks in the list.");
+                        System.out.println("____________________________________________________________");
+
+                    } catch (NumberFormatException e) {
+                        System.out.println("____________________________________________________________");
+                        System.out.println(" Please provide a valid task number, e.g., 'delete 2'.");
+                        System.out.println("____________________________________________________________");
+                    }
                 } else {
                     throw new UnsupportedOperationException("Unknown command: " + input);
                 }
