@@ -1,3 +1,5 @@
+package mang;
+
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 
@@ -41,7 +43,7 @@ public final class Parser {
         String[] parts = rest.split("/by", 2);
         String desc = parts[0].trim();
         if (parts.length < 2 || parts[1].trim().isEmpty()) {
-            throw new IllegalArgumentException("Deadline requires a date. Use yyyy-MM-dd, e.g., 2019-10-15");
+            throw new IllegalArgumentException("mang.Deadline requires a date. Use yyyy-MM-dd, e.g., 2019-10-15");
         }
         String byStr = parts[1].trim();
         try {

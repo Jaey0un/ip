@@ -1,7 +1,9 @@
+package mang;
+
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
-/** Deadline task. */
+/** mang.Deadline task. */
 public class Deadline extends Task {
     private final LocalDate by;
 
