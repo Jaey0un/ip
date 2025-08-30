@@ -1,5 +1,5 @@
-/** Event task. */
-class Event extends Task {
+/** Event task with a start and an end. */
+public class Event extends Task {
     private final String from;
     private final String to;
 
@@ -7,6 +7,16 @@ class Event extends Task {
         super(description);
         this.from = from;
         this.to = to;
+    }
+
+    /** Returns the start time/string. */
+    public String getFrom() {
+        return from;
+    }
+
+    /** Returns the end time/string. */
+    public String getTo() {
+        return to;
     }
 
     @Override

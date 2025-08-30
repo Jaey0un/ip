@@ -1,10 +1,17 @@
 import java.util.Scanner;
 
+/**
+ * Entry point of the Mang chatbot.
+ * Supports add/list/mark/unmark/delete and persists tasks on disk.
+ */
 public class Mang {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
         Task[] tasks = new Task[100];
-        int count = 0;
+        int count;
+
+        Storage storage = new Storage();
+        count = storage.load(tasks); // load at startup
 
         // Greet
         System.out.println("____________________________________________________________");
@@ -17,7 +24,6 @@ public class Mang {
             String input = sc.nextLine().trim();
 
             try {
-                // Exit
                 if (input.equals("bye")) {
                     System.out.println("____________________________________________________________");
                     System.out.println(" Bye. Hope to see you again soon!");
@@ -36,6 +42,7 @@ public class Mang {
                     int idx = Integer.parseInt(input.substring(5).trim());
                     if (idx >= 1 && idx <= count) {
                         tasks[idx - 1].markDone();
+                        storage.save(tasks, count);
                         System.out.println("____________________________________________________________");
                         System.out.println(" Nice! I've marked this task as done:");
                         System.out.println("   " + tasks[idx - 1]);
@@ -48,6 +55,7 @@ public class Mang {
                     int idx = Integer.parseInt(input.substring(7).trim());
                     if (idx >= 1 && idx <= count) {
                         tasks[idx - 1].markUndone();
+                        storage.save(tasks, count);
                         System.out.println("____________________________________________________________");
                         System.out.println(" OK, I've marked this task as not done yet:");
                         System.out.println("   " + tasks[idx - 1]);
@@ -63,6 +71,7 @@ public class Mang {
                     }
                     tasks[count] = new Todo(desc);
                     count++;
+                    storage.save(tasks, count);
                     System.out.println("____________________________________________________________");
                     System.out.println(" Got it. I've added this task:");
                     System.out.println("   " + tasks[count - 1]);
@@ -79,6 +88,7 @@ public class Mang {
                     String by = (parts.length > 1) ? parts[1].trim() : "unspecified";
                     tasks[count] = new Deadline(desc, by);
                     count++;
+                    storage.save(tasks, count);
                     System.out.println("____________________________________________________________");
                     System.out.println(" Got it. I've added this task:");
                     System.out.println("   " + tasks[count - 1]);
@@ -100,6 +110,7 @@ public class Mang {
                         tasks[count] = new Event(rest, "unspecified", "unspecified");
                     }
                     count++;
+                    storage.save(tasks, count);
                     System.out.println("____________________________________________________________");
                     System.out.println(" Got it. I've added this task:");
                     System.out.println("   " + tasks[count - 1]);
@@ -113,14 +124,12 @@ public class Mang {
                             throw new IllegalArgumentException("Task number " + idx + " does not exist.");
                         }
                         Task removed = tasks[idx - 1];
-
-                        // shift tasks left
                         for (int i = idx - 1; i < count - 1; i++) {
                             tasks[i] = tasks[i + 1];
                         }
                         tasks[count - 1] = null;
                         count--;
-
+                        storage.save(tasks, count);
                         System.out.println("____________________________________________________________");
                         System.out.println(" Noted. I've removed this task:");
                         System.out.println("   " + removed);
@@ -132,6 +141,7 @@ public class Mang {
                         System.out.println(" Please provide a valid task number, e.g., 'delete 2'.");
                         System.out.println("____________________________________________________________");
                     }
+
                 } else {
                     throw new UnsupportedOperationException("Unknown command: " + input);
                 }
