@@ -1,19 +1,24 @@
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
 /** Deadline task. */
 public class Deadline extends Task {
-    private final String by;
+    private final LocalDate by;
 
-    public Deadline(String description, String by) {
+    public Deadline(String description, LocalDate by) {
         super(description);
         this.by = by;
     }
 
-    /** Returns the due time/string. */
-    public String getBy() {
+    /** Returns the due date. */
+    public LocalDate getBy() {
         return by;
     }
 
     @Override
     public String toString() {
-        return "[D]" + super.toString() + " (by: " + by + ")";
+        // Print in format: "Oct 15 2019"
+        String human = by.format(DateTimeFormatter.ofPattern("MMM d yyyy"));
+        return "[D]" + super.toString() + " (by: " + human + ")";
     }
 }

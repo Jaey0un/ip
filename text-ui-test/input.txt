@@ -1,4 +1,3 @@
-todo read book
-bye
+deadline return book /by 2019-10-15
 list
 bye

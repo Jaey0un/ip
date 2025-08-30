@@ -4,13 +4,15 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 
 /**
  * Handles persistence of tasks to disk and loading them on startup.
  * File format (UTF-8, one task per line):
  *   T | 1 | read book
- *   D | 0 | return book | Sunday
+ *   D | 0 | return book | 2019-10-15
  *   E | 1 | project meeting | Mon 2pm | 4pm
  */
 public class Storage {
@@ -60,8 +62,15 @@ public class Storage {
                         t = new Todo(desc);
                         break;
                     case "D":
-                        String by = parts.length >= 4 ? parts[3] : "unspecified";
-                        t = new Deadline(desc, by);
+                        if (parts.length < 4) {
+                            continue; // corrupted → skip
+                        }
+                        try {
+                            LocalDate by = LocalDate.parse(parts[3]);
+                            t = new Deadline(desc, by);
+                        } catch (DateTimeParseException e) {
+                            continue; // malformed date → skip the line
+                        }
                         break;
                     case "E":
                         String from = parts.length >= 4 ? parts[3] : "unspecified";
@@ -106,7 +115,7 @@ public class Storage {
                     StandardOpenOption.WRITE
             );
         } catch (IOException ignored) {
-            // Best-effort persistence for Level-7.
+            // Best-effort persistence for Level-7/8.
         }
     }
 
@@ -123,7 +132,9 @@ public class Storage {
             return String.format("T | %s | %s", done, t.getDescription());
         } else if (t instanceof Deadline) {
             Deadline d = (Deadline) t;
-            return String.format("D | %s | %s | %s", done, d.getDescription(), d.getBy());
+            // Store as ISO date for easy parsing
+            return String.format("D | %s | %s | %s",
+                    done, d.getDescription(), d.getBy().toString());
         } else if (t instanceof Event) {
             Event e = (Event) t;
             return String.format("E | %s | %s | %s | %s",
