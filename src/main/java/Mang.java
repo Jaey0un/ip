@@ -1,3 +1,5 @@
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.Scanner;
 
 /**
@@ -5,6 +7,11 @@ import java.util.Scanner;
  * Supports add/list/mark/unmark/delete and persists tasks on disk.
  */
 public class Mang {
+    /**
+     * Runs the Mang CLI loop: reads commands, mutates task list, and persists changes.
+     *
+     * @param args Unused CLI arguments.
+     */
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
         Task[] tasks = new Task[100];
@@ -85,15 +92,25 @@ public class Mang {
                     }
                     String[] parts = rest.split("/by", 2);
                     String desc = parts[0].trim();
-                    String by = (parts.length > 1) ? parts[1].trim() : "unspecified";
-                    tasks[count] = new Deadline(desc, by);
-                    count++;
-                    storage.save(tasks, count);
-                    System.out.println("____________________________________________________________");
-                    System.out.println(" Got it. I've added this task:");
-                    System.out.println("   " + tasks[count - 1]);
-                    System.out.println(" Now you have " + count + " tasks in the list.");
-                    System.out.println("____________________________________________________________");
+                    if (parts.length < 2 || parts[1].trim().isEmpty()) {
+                        throw new IllegalArgumentException(
+                                "Deadline requires a date. Use yyyy-MM-dd, e.g., 2019-10-15");
+                    }
+                    String byStr = parts[1].trim();
+                    try {
+                        LocalDate by = LocalDate.parse(byStr); // expects yyyy-MM-dd
+                        tasks[count] = new Deadline(desc, by);
+                        count++;
+                        storage.save(tasks, count);
+                        System.out.println("____________________________________________________________");
+                        System.out.println(" Got it. I've added this task:");
+                        System.out.println("   " + tasks[count - 1]);
+                        System.out.println(" Now you have " + count + " tasks in the list.");
+                        System.out.println("____________________________________________________________");
+                    } catch (DateTimeParseException pe) {
+                        throw new IllegalArgumentException(
+                                "Invalid date format. Please use yyyy-MM-dd, e.g., 2019-10-15");
+                    }
 
                 } else if (input.startsWith("event")) {
                     String rest = input.length() > 5 ? input.substring(5).trim() : "";
