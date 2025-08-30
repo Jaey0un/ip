@@ -1,5 +1,5 @@
-/** Todo task. */
-class Todo extends Task {
+/** Todo task (no date/time). */
+public class Todo extends Task {
     public Todo(String description) {
         super(description);
     }
