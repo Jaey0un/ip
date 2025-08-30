@@ -1,4 +1,6 @@
-/** Event task with a start and an end. */
+package mang;
+
+/** mang.Event task with a start and an end. */
 public class Event extends Task {
     private final String from;
     private final String to;

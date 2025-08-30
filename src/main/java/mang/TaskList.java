@@ -1,3 +1,5 @@
+package mang;
+
 /** Holds and mutates the list of tasks. */
 public class TaskList {
     private final Task[] tasks;
@@ -64,14 +66,14 @@ public class TaskList {
         return removed;
     }
 
-    /** Exposes the backing array for persistence (Storage.save). */
+    /** Exposes the backing array for persistence (mang.Storage.save). */
     public Task[] backingArray() {
         return tasks;
     }
 
     private void validateIndex(int oneBasedIndex) {
         if (oneBasedIndex < 1 || oneBasedIndex > count) {
-            throw new IllegalArgumentException("Task number " + oneBasedIndex + " does not exist.");
+            throw new IllegalArgumentException("mang.Task number " + oneBasedIndex + " does not exist.");
         }
     }
 }

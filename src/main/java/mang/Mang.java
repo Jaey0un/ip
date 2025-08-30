@@ -1,13 +1,12 @@
-import java.time.LocalDate;
-import java.time.format.DateTimeParseException;
+package mang;
 
 /**
- * Entry point of the Mang chatbot.
+ * Entry point of the mang.Mang chatbot.
  * Supports add/list/mark/unmark/delete and persists tasks on disk.
  */
 public class Mang {
     /**
-     * Runs the Mang CLI loop: reads commands, mutates task list, and persists changes.
+     * Runs the mang.Mang CLI loop: reads commands, mutates task list, and persists changes.
      *
      * @param args Unused CLI arguments.
      */

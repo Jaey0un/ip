@@ -1,3 +1,5 @@
+package mang;
+
 import java.util.Scanner;
 
 /** Deals with all user interactions (printing and reading). */
