@@ -3,9 +3,12 @@ package mang;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 
-/** Parses raw user input into actionable parts or task objects. */
+/**
+ * Parses raw user input into actionable parts or task objects.
+ */
 public final class Parser {
-    private Parser() {}
+    private Parser() {
+    }
 
     /**
      * Returns true if the input is the exit command ("bye").
@@ -30,7 +33,7 @@ public final class Parser {
     /**
      * Returns true if the input starts with the given prefix followed by a space.
      *
-     * @param input The raw user input.
+     * @param input  The raw user input.
      * @param prefix The expected prefix (e.g., "mark").
      * @return True if input starts with the prefix.
      */
@@ -41,7 +44,7 @@ public final class Parser {
     /**
      * Parses an index from a command string after a given prefix.
      *
-     * @param input The full user command.
+     * @param input  The full user command.
      * @param prefix The command keyword (e.g., "mark", "delete").
      * @return The parsed integer index (1-based).
      * @throws NumberFormatException If the index is missing or not a valid number.

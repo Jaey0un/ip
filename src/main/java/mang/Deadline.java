@@ -3,7 +3,9 @@ package mang;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
-/** mang.Deadline task. */
+/**
+ * mang.Deadline task.
+ */
 public class Deadline extends Task {
     private final LocalDate by;
 
@@ -11,14 +13,16 @@ public class Deadline extends Task {
      * Creates a Deadline task with a description and a due date.
      *
      * @param description The task description.
-     * @param by The due date of the deadline.
+     * @param by          The due date of the deadline.
      */
     public Deadline(String description, LocalDate by) {
         super(description);
         this.by = by;
     }
 
-    /** Returns the due date. */
+    /**
+     * Returns the due date.
+     */
     public LocalDate getBy() {
         return by;
     }
