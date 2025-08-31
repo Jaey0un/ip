@@ -5,13 +5,20 @@ public class TaskList {
     private final Task[] tasks;
     private int count;
 
-    /** Creates an empty list with capacity 100. */
+    /**
+     * Creates an empty task list with a fixed capacity of 100 tasks.
+     */
     public TaskList() {
         this.tasks = new Task[100];
         this.count = 0;
     }
 
-    /** Wraps an existing array and size (used after loading from storage). */
+    /**
+     * Creates a TaskList that wraps an existing array of tasks and its count.
+     *
+     * @param initial The initial array of tasks.
+     * @param count The number of tasks already in the array.
+     */
     public TaskList(Task[] initial, int count) {
         this.tasks = initial;
         this.count = count;
@@ -22,7 +29,12 @@ public class TaskList {
         return count;
     }
 
-    /** Returns the task at zero-based index. */
+    /**
+     * Returns the task at the given zero-based index.
+     *
+     * @param zeroBasedIndex The index starting from 0.
+     * @return The task at the given position.
+     */
     public Task get(int zeroBasedIndex) {
         return tasks[zeroBasedIndex];
     }
@@ -37,7 +49,13 @@ public class TaskList {
         return t;
     }
 
-    /** Marks task (1-based index) as done and returns it. */
+    /**
+     * Marks the task at the given 1-based index as done.
+     *
+     * @param oneBasedIndex Index of the task to mark (starting from 1).
+     * @return The task that was marked as done.
+     * @throws IllegalArgumentException If the index is out of bounds.
+     */
     public Task mark(int oneBasedIndex) {
         int i = oneBasedIndex - 1;
         validateIndex(oneBasedIndex);
@@ -45,7 +63,13 @@ public class TaskList {
         return tasks[i];
     }
 
-    /** Marks task (1-based index) as not done and returns it. */
+    /**
+     * Marks the task at the given 1-based index as not done.
+     *
+     * @param oneBasedIndex Index of the task to unmark (starting from 1).
+     * @return The task that was marked as not done.
+     * @throws IllegalArgumentException If the index is out of bounds.
+     */
     public Task unmark(int oneBasedIndex) {
         int i = oneBasedIndex - 1;
         validateIndex(oneBasedIndex);
@@ -53,7 +77,13 @@ public class TaskList {
         return tasks[i];
     }
 
-    /** Deletes task (1-based index) and returns it. */
+    /**
+     * Deletes the task at the given 1-based index.
+     *
+     * @param oneBasedIndex Index of the task to delete (starting from 1).
+     * @return The removed task.
+     * @throws IllegalArgumentException If the index is out of bounds.
+     */
     public Task delete(int oneBasedIndex) {
         int i = oneBasedIndex - 1;
         validateIndex(oneBasedIndex);
@@ -66,7 +96,11 @@ public class TaskList {
         return removed;
     }
 
-    /** Exposes the backing array for persistence (mang.Storage.save). */
+    /**
+     * Returns the underlying task array used for storage.
+     *
+     * @return The backing task array.
+     */
     public Task[] backingArray() {
         return tasks;
     }

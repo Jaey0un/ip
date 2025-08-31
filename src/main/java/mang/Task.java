@@ -1,7 +1,8 @@
 package mang;
 
 /**
- * Represents a task with a description and a done/undone status.
+ * Represents a generic task with a description and a completion status
+ * (done or not done).
  */
 public class Task {
     private final String description;
