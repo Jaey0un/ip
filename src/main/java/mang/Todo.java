@@ -1,6 +1,8 @@
 package mang;
 
-/** mang.Todo task (no date/time). */
+/**
+ * mang.Todo task (no date/time).
+ */
 public class Todo extends Task {
     /**
      * Creates a Todo task with the given description.

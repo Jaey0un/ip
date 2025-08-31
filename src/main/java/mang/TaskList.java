@@ -1,6 +1,8 @@
 package mang;
 
-/** Holds and mutates the list of tasks. */
+/**
+ * Holds and mutates the list of tasks.
+ */
 public class TaskList {
     private final Task[] tasks;
     private int count;
@@ -17,14 +19,16 @@ public class TaskList {
      * Creates a TaskList that wraps an existing array of tasks and its count.
      *
      * @param initial The initial array of tasks.
-     * @param count The number of tasks already in the array.
+     * @param count   The number of tasks already in the array.
      */
     public TaskList(Task[] initial, int count) {
         this.tasks = initial;
         this.count = count;
     }
 
-    /** Returns number of tasks. */
+    /**
+     * Returns number of tasks.
+     */
     public int size() {
         return count;
     }
@@ -39,7 +43,9 @@ public class TaskList {
         return tasks[zeroBasedIndex];
     }
 
-    /** Adds a task; returns the added task. */
+    /**
+     * Adds a task; returns the added task.
+     */
     public Task add(Task t) {
         if (count >= tasks.length) {
             throw new IllegalStateException("Sorry, I can only store up to " + tasks.length + " items.");

@@ -2,19 +2,25 @@ package mang;
 
 import java.util.Scanner;
 
-/** Deals with all user interactions (printing and reading). */
+/**
+ * Deals with all user interactions (printing and reading).
+ */
 public class Ui {
     private static final String LINE =
             "____________________________________________________________";
 
     private final Scanner scanner = new Scanner(System.in);
 
-    /** Prints the horizontal divider line. */
+    /**
+     * Prints the horizontal divider line.
+     */
     public void showLine() {
         System.out.println(LINE);
     }
 
-    /** Shows the welcome message. */
+    /**
+     * Shows the welcome message.
+     */
     public void showWelcome() {
         showLine();
         System.out.println(" Hello! I'm Mang, your friendly neighborhood chatbot!");
@@ -23,19 +29,25 @@ public class Ui {
         showLine();
     }
 
-    /** Shows the goodbye message. */
+    /**
+     * Shows the goodbye message.
+     */
     public void showBye() {
         showLine();
         System.out.println(" Bye. Hope to see you again soon!");
         showLine();
     }
 
-    /** Reads one command line from STDIN, trimmed. */
+    /**
+     * Reads one command line from STDIN, trimmed.
+     */
     public String readCommand() {
         return scanner.nextLine().trim();
     }
 
-    /** Shows the current task list. */
+    /**
+     * Shows the current task list.
+     */
     public void showList(TaskList list) {
         showLine();
         System.out.println(" Here are the tasks in your list:");
@@ -45,7 +57,9 @@ public class Ui {
         showLine();
     }
 
-    /** Shows a task added message. */
+    /**
+     * Shows a task added message.
+     */
     public void showAdded(Task t, int newCount) {
         showLine();
         System.out.println(" Got it. I've added this task:");
@@ -54,7 +68,9 @@ public class Ui {
         showLine();
     }
 
-    /** Shows a task marked as done message. */
+    /**
+     * Shows a task marked as done message.
+     */
     public void showMarked(Task t) {
         showLine();
         System.out.println(" Nice! I've marked this task as done:");
@@ -62,7 +78,9 @@ public class Ui {
         showLine();
     }
 
-    /** Shows a task marked as not done message. */
+    /**
+     * Shows a task marked as not done message.
+     */
     public void showUnmarked(Task t) {
         showLine();
         System.out.println(" OK, I've marked this task as not done yet:");
@@ -70,7 +88,9 @@ public class Ui {
         showLine();
     }
 
-    /** Shows a removed task message. */
+    /**
+     * Shows a removed task message.
+     */
     public void showRemoved(Task removed, int newCount) {
         showLine();
         System.out.println(" Noted. I've removed this task:");
@@ -79,7 +99,9 @@ public class Ui {
         showLine();
     }
 
-    /** Shows a generic error. */
+    /**
+     * Shows a generic error.
+     */
     public void showError(String message) {
         showLine();
         System.out.println(" " + message);

@@ -13,19 +13,23 @@ import java.util.List;
 /**
  * Handles persistence of tasks to disk and loading them on startup.
  * File format (UTF-8, one task per line):
- *   T | 1 | read book
- *   D | 0 | return book | 2019-10-15
- *   E | 1 | project meeting | Mon 2pm | 4pm
+ * T | 1 | read book
+ * D | 0 | return book | 2019-10-15
+ * E | 1 | project meeting | Mon 2pm | 4pm
  */
 public class Storage {
     private final Path file; // e.g., data/mang.txt (relative, OS-independent)
 
-    /** Creates a storage using the default file location {@code data/mang.txt}. */
+    /**
+     * Creates a storage using the default file location {@code data/mang.txt}.
+     */
     public Storage() {
         this(Paths.get("data", "mang.txt"));
     }
 
-    /** Creates a storage that reads/writes to the given path. */
+    /**
+     * Creates a storage that reads/writes to the given path.
+     */
     public Storage(Path file) {
         this.file = file;
     }
@@ -60,27 +64,27 @@ public class Storage {
 
                 Task t;
                 switch (type) {
-                    case "T":
-                        t = new Todo(desc);
-                        break;
-                    case "D":
-                        if (parts.length < 4) {
-                            continue; // corrupted → skip
-                        }
-                        try {
-                            LocalDate by = LocalDate.parse(parts[3]);
-                            t = new Deadline(desc, by);
-                        } catch (DateTimeParseException e) {
-                            continue; // malformed date → skip the line
-                        }
-                        break;
-                    case "E":
-                        String from = parts.length >= 4 ? parts[3] : "unspecified";
-                        String to = parts.length >= 5 ? parts[4] : "unspecified";
-                        t = new Event(desc, from, to);
-                        break;
-                    default:
-                        continue; // unknown → skip
+                case "T":
+                    t = new Todo(desc);
+                    break;
+                case "D":
+                    if (parts.length < 4) {
+                        continue; // corrupted → skip
+                    }
+                    try {
+                        LocalDate by = LocalDate.parse(parts[3]);
+                        t = new Deadline(desc, by);
+                    } catch (DateTimeParseException e) {
+                        continue; // malformed date → skip the line
+                    }
+                    break;
+                case "E":
+                    String from = parts.length >= 4 ? parts[3] : "unspecified";
+                    String to = parts.length >= 5 ? parts[4] : "unspecified";
+                    t = new Event(desc, from, to);
+                    break;
+                default:
+                    continue; // unknown → skip
                 }
                 if (done) {
                     t.markDone();
@@ -97,7 +101,9 @@ public class Storage {
         }
     }
 
-    /** Saves the first {@code count} tasks to disk (overwrites the data file). */
+    /**
+     * Saves the first {@code count} tasks to disk (overwrites the data file).
+     */
     public void save(Task[] tasks, int count) {
         try {
             ensureParentDir();
