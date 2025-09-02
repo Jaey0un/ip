@@ -107,4 +107,18 @@ public class Ui {
         System.out.println(" " + message);
         showLine();
     }
+
+    /**
+     * Shows the results of a {@code find} command.
+     *
+     * @param results Matching tasks to display (maybe empty).
+     */
+    public void showFound(Task[] results) {
+        showLine();
+        System.out.println(" Here are the matching tasks in your list:");
+        for (int i = 0; i < results.length; i++) {
+            System.out.println(" " + (i + 1) + "." + results[i]);
+        }
+        showLine();
+    }
 }

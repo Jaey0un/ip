@@ -119,4 +119,27 @@ public final class Parser {
         }
         return new Event(rest, "unspecified", "unspecified");
     }
+
+    /**
+     * Returns true if the input is a {@code find} command.
+     */
+    public static boolean isFind(String input) {
+        // require a space after "find" so that "find" alone is not accepted here
+        return startsWith(input, "find") || "find".equals(input);
+    }
+
+    /**
+     * Extracts the keyword that follows the {@code find} command.
+     *
+     * @param input Full command line, e.g. {@code "find book"}.
+     * @return The trimmed keyword.
+     * @throws IllegalArgumentException If the keyword is missing/empty.
+     */
+    public static String parseFindKeyword(String input) {
+        String keyword = input.length() > 4 ? input.substring(4).trim() : "";
+        if (keyword.isEmpty()) {
+            throw new IllegalArgumentException("The keyword for find cannot be empty.");
+        }
+        return keyword;
+    }
 }

@@ -1,5 +1,8 @@
 package mang;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Holds and mutates the list of tasks.
  */
@@ -115,5 +118,23 @@ public class TaskList {
         if (oneBasedIndex < 1 || oneBasedIndex > count) {
             throw new IllegalArgumentException("mang.Task number " + oneBasedIndex + " does not exist.");
         }
+    }
+
+    /**
+     * Finds tasks whose description contains the given keyword (case-insensitive).
+     *
+     * @param keyword Search keyword.
+     * @return An array of matching tasks in the same order as they appear in the list.
+     */
+    public Task[] find(String keyword) {
+        String needle = keyword.toLowerCase();
+        List<Task> matches = new ArrayList<>();
+        for (int i = 0; i < count; i++) {
+            String desc = tasks[i].getDescription();
+            if (desc.toLowerCase().contains(needle)) {
+                matches.add(tasks[i]);
+            }
+        }
+        return matches.toArray(new Task[0]);
     }
 }

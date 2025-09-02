@@ -71,6 +71,10 @@ public class Mang {
                         ui.showError(" Please provide a valid task number, e.g., 'delete 2'.");
                     }
 
+                } else if (Parser.isFind(input)) {
+                    String keyword = Parser.parseFindKeyword(input);
+                    Task[] found = tasks.find(keyword);
+                    ui.showFound(found);
                 } else {
                     throw new UnsupportedOperationException("Unknown command: " + input);
                 }
