@@ -115,7 +115,8 @@ public class Storage {
             // Real I/O failure → surface to UI via typed exception
             throw new StorageException("Unable to load tasks from " + file + ": " + e.getMessage(), e);
         } catch (SecurityException se) {
-            throw new StorageException("Security manager prevented file access for " + file + ": " + se.getMessage(), se);
+            throw new StorageException(
+                    "Security manager prevented file access for " + file + ": " + se.getMessage(), se);
         }
     }
 
