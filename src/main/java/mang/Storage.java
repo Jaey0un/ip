@@ -29,6 +29,8 @@ public class Storage {
 
     /**
      * Creates a storage that reads/writes to the given path.
+     *
+     * @param file path to the data file
      */
     public Storage(Path file) {
         this.file = file;
@@ -36,7 +38,11 @@ public class Storage {
 
     /**
      * Loads tasks from disk into {@code dest} and returns the number loaded.
-     * Never throws; returns 0 on first run or I/O errors.
+     * Missing file: created and returns 0 (first run).
+     * Permission/other I/O errors: throws {@link StorageException}.
+     *
+     * @param dest destination array (must not be null)
+     * @return number of tasks loaded
      */
     public int load(Task[] dest) {
         if (dest == null) {
@@ -44,10 +50,18 @@ public class Storage {
         }
         try {
             ensureParentDir();
-            if (!Files.exists(file)) {
+
+            if (Files.notExists(file)) {
                 Files.createFile(file); // first run
                 return 0;
             }
+            if (Files.isDirectory(file)) {
+                throw new StorageException("Data path points to a directory, not a file: " + file);
+            }
+            if (!Files.isReadable(file)) {
+                throw new StorageException("Data file is not readable: " + file);
+            }
+
             List<String> lines = Files.readAllLines(file, StandardCharsets.UTF_8);
             int count = 0;
             for (String raw : lines) {
@@ -86,6 +100,7 @@ public class Storage {
                 default:
                     continue; // unknown → skip
                 }
+
                 if (done) {
                     t.markDone();
                 }
@@ -97,16 +112,31 @@ public class Storage {
             }
             return count;
         } catch (IOException e) {
-            return 0; // non-fatal: start empty
+            // Real I/O failure → surface to UI via typed exception
+            throw new StorageException("Unable to load tasks from " + file + ": " + e.getMessage(), e);
+        } catch (SecurityException se) {
+            throw new StorageException("Security manager prevented file access for " + file + ": " + se.getMessage(), se);
         }
     }
 
     /**
      * Saves the first {@code count} tasks to disk (overwrites the data file).
+     * I/O errors are reported via {@link StorageException}.
+     *
+     * @param tasks task array
+     * @param count number of tasks to persist
      */
     public void save(Task[] tasks, int count) {
         try {
             ensureParentDir();
+
+            if (Files.exists(file) && Files.isDirectory(file)) {
+                throw new StorageException("Data path points to a directory, not a file: " + file);
+            }
+            if (Files.exists(file) && !Files.isWritable(file)) {
+                throw new StorageException("Data file is not writable: " + file);
+            }
+
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < count; i++) {
                 Task t = tasks[i];
@@ -115,15 +145,18 @@ public class Storage {
                 }
                 sb.append(serialize(t)).append(System.lineSeparator());
             }
-            Files.write(
+
+            Files.writeString(
                     file,
-                    sb.toString().getBytes(StandardCharsets.UTF_8),
+                    sb.toString(),
                     StandardOpenOption.CREATE,
                     StandardOpenOption.TRUNCATE_EXISTING,
                     StandardOpenOption.WRITE
             );
-        } catch (IOException ignored) {
-            // Best-effort persistence for Level-7/8.
+        } catch (IOException e) {
+            throw new StorageException("Unable to save tasks to " + file + ": " + e.getMessage(), e);
+        } catch (SecurityException se) {
+            throw new StorageException("Security manager prevented writing to " + file + ": " + se.getMessage(), se);
         }
     }
 
@@ -148,6 +181,7 @@ public class Storage {
             return String.format("E | %s | %s | %s | %s",
                     done, e.getDescription(), e.getFrom(), e.getTo());
         }
-        return String.format("T | %s | %s", done, t.toString());
+        // Fallback: preserve type safety by refusing unknown subtypes
+        throw new StorageException("Unsupported task subtype: " + t.getClass().getName());
     }
 }
