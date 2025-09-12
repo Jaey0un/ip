@@ -1,5 +1,7 @@
 package mang;
 
+import java.util.Objects;
+
 /**
  * Represents a generic task with a description and a completion status
  * (done or not done).
@@ -44,6 +46,9 @@ public class Task {
         this.isDone = false;
     }
 
+    /**
+     * Returns a string icon representing the status of the task.
+     */
     private String statusIcon() {
         return isDone ? "[X]" : "[ ]";
     }
@@ -51,5 +56,30 @@ public class Task {
     @Override
     public String toString() {
         return statusIcon() + " " + description;
+    }
+
+    /**
+     * Checks if this task is equal to another object.
+     * Two tasks are equal if they have the same description and completion status.
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (!(obj instanceof Task)) {
+            return false;
+        }
+        Task other = (Task) obj;
+        return isDone == other.isDone
+                && Objects.equals(description, other.description);
+    }
+
+    /**
+     * Returns a hash code value for this task.
+     */
+    @Override
+    public int hashCode() {
+        return Objects.hash(description, isDone);
     }
 }

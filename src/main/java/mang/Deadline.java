@@ -30,7 +30,7 @@ public class Deadline extends Task {
     @Override
     public String toString() {
         // Print in format: "Oct 15 2019"
-        String human = by.format(DateTimeFormatter.ofPattern("MMM d yyyy"));
-        return "[D]" + super.toString() + " (by: " + human + ")";
+        String formattedDate = by.format(DateTimeFormatter.ofPattern("MMM d yyyy"));
+        return "[D]" + super.toString() + " (by: " + formattedDate + ")";
     }
 }
