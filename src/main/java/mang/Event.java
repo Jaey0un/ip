@@ -14,6 +14,7 @@ public class Event extends Task {
      * @param from        The start time of the event.
      * @param to          The end time of the event.
      */
+    @SuppressWarnings("checkstyle:Regexp")
     public Event(String description, String from, String to) {
         super(description);
         this.from = from;

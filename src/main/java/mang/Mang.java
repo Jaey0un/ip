@@ -52,20 +52,17 @@ public class Mang {
                     ui.showUnmarked(t);
 
                 } else if (input.startsWith("todo")) {
-                    Task t = Parser.parseTodo(input);
-                    tasks.add(t);
+                    Task t = tasks.add(Parser.parseTodo(input));
                     persist(storage, tasks, ui);
                     ui.showAdded(t, tasks.size());
 
                 } else if (input.startsWith("deadline")) {
-                    Task t = Parser.parseDeadline(input);
-                    tasks.add(t);
+                    Task t = tasks.add(Parser.parseTodo(input));
                     persist(storage, tasks, ui);
                     ui.showAdded(t, tasks.size());
 
                 } else if (input.startsWith("event")) {
-                    Task t = Parser.parseEvent(input);
-                    tasks.add(t);
+                    Task t = tasks.add(Parser.parseTodo(input));
                     persist(storage, tasks, ui);
                     ui.showAdded(t, tasks.size());
 
