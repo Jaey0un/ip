@@ -1,11 +1,130 @@
 package mang;
 
 /**
- * Entry point of the Mang chatbot.
- * Supports add/list/mark/unmark/delete, persists tasks on disk,
- * and reports storage errors clearly to the user.
+ * Represents the main class for the Mang chatbot.
+ * It contains the core logic for processing user commands and managing tasks.
  */
 public class Mang {
+
+    private final Ui ui;
+    private final Storage storage;
+    private final TaskList tasks;
+
+    /**
+     * Constructor for the Mang chatbot.
+     * Initializes storage and loads tasks from the data file.
+     */
+    public Mang() {
+        ui = new Ui();
+        storage = new Storage();
+        Task[] loaded = new Task[100];
+        int loadedCount;
+        try {
+            loadedCount = storage.load(loaded);
+        } catch (StorageException se) {
+            // GUI에서는 에러를 문자열로 반환
+            // 여기서는 간단하게 초기화
+            loadedCount = 0;
+        }
+        tasks = new TaskList(loaded, loadedCount);
+    }
+
+    /**
+     * Processes a user command and generates a response.
+     * This method is called by the GUI controller to interact with the chatbot's core logic.
+     *
+     * @param input The command string entered by the user.
+     * @return A string containing the chatbot's response.
+     */
+    public String getResponse(String input) {
+        try {
+            if (Parser.isBye(input)) {
+                return "Bye. Hope to see you again soon!";
+
+            } else if (Parser.isList(input)) {
+                return formatList();
+
+            } else if (Parser.startsWith(input, "mark")) {
+                int idx = Parser.parseIndexAfter(input, "mark");
+                Task t = tasks.mark(idx);
+                persistGui();
+                return "Nice! I've marked this task as done:\n  " + t;
+
+            } else if (Parser.startsWith(input, "unmark")) {
+                int idx = Parser.parseIndexAfter(input, "unmark");
+                Task t = tasks.unmark(idx);
+                persistGui();
+                return "OK, I've marked this task as not done yet:\n  " + t;
+
+            } else if (input.startsWith("todo")) {
+                Task t = tasks.add(Parser.parseTodo(input));
+                persistGui();
+                return formatAdded(t);
+
+            } else if (input.startsWith("deadline")) {
+                Task t = tasks.add(Parser.parseDeadline(input)); // parseDeadline 사용
+                persistGui();
+                return formatAdded(t);
+
+            } else if (input.startsWith("event")) {
+                Task t = tasks.add(Parser.parseEvent(input)); // parseEvent 사용
+                persistGui();
+                return formatAdded(t);
+
+            } else if (Parser.startsWith(input, "delete")) {
+                int idx = Parser.parseIndexAfter(input, "delete");
+                Task removed = tasks.delete(idx);
+                persistGui();
+                return "Noted. I've removed this task:\n  " + removed
+                        + "\nNow you have " + tasks.size() + " tasks in the list.";
+
+            } else if (Parser.isFind(input)) {
+                String keyword = Parser.parseFindKeyword(input);
+                Task[] found = tasks.find(keyword);
+                return formatFound(found);
+
+            } else {
+                throw new UnsupportedOperationException("Unknown command: " + input);
+            }
+        } catch (Exception e) {
+            return "OOPS! " + e.getMessage(); // 예외 메시지를 문자열로 반환
+        }
+    }
+
+    // Convert the methods of the Ui class to string return types
+    private String formatAdded(Task t) {
+        return "Got it. I've added this task:\n  " + t
+                + "\nNow you have " + tasks.size() + " tasks in the list.";
+    }
+
+    private String formatList() {
+        if (tasks.size() == 0) {
+            return "Your task list is empty.";
+        }
+        StringBuilder sb = new StringBuilder("Here are the tasks in your list:\n");
+        for (int i = 0; i < tasks.size(); i++) {
+            sb.append(" ").append(i + 1).append(".").append(tasks.get(i)).append("\n");
+        }
+        return sb.toString().trim();
+    }
+
+    private String formatFound(Task[] results) {
+        if (results.length == 0) {
+            return "No matching tasks found.";
+        }
+        StringBuilder sb = new StringBuilder("Here are the matching tasks in your list:\n");
+        for (int i = 0; i < results.length; i++) {
+            sb.append(" ").append(i + 1).append(".").append(results[i]).append("\n");
+        }
+        return sb.toString().trim();
+    }
+
+    /**
+     * 작업을 파일에 저장합니다.
+     */
+    private void persistGui() throws StorageException {
+        storage.save(tasks.backingArray(), tasks.size());
+    }
 
     /**
      * Runs the CLI loop: reads commands, mutates task list, and persists changes.
