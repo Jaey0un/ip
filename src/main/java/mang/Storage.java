@@ -49,75 +49,95 @@ public class Storage {
             throw new IllegalArgumentException("Destination array cannot be null.");
         }
         try {
-            ensureParentDir();
-
-            if (Files.notExists(file)) {
-                Files.createFile(file); // first run
-                return 0;
-            }
-            if (Files.isDirectory(file)) {
-                throw new StorageException("Data path points to a directory, not a file: " + file);
-            }
-            if (!Files.isReadable(file)) {
-                throw new StorageException("Data file is not readable: " + file);
-            }
+            prepareAndValidateDataFile(); // extract: parent dir, file exists, readable, not dir
 
             List<String> lines = Files.readAllLines(file, StandardCharsets.UTF_8);
             int count = 0;
+
             for (String raw : lines) {
-                if (raw == null || raw.trim().isEmpty()) {
-                    continue;
+                Task t = parseLineToTask(raw); // extract: parse one line into Task (or null)
+                if (t == null) {
+                    continue; // skip blank/corrupted lines
                 }
-                String[] parts = raw.split("\\s*\\|\\s*"); // tolerate spaces around '|'
-                if (parts.length < 3) {
-                    continue; // corrupted → skip
-                }
-                String type = parts[0];
-                boolean done = "1".equals(parts[1]);
-                String desc = parts[2];
-
-                Task t;
-                switch (type) {
-                case "T":
-                    t = new Todo(desc);
-                    break;
-                case "D":
-                    if (parts.length < 4) {
-                        continue; // corrupted → skip
-                    }
-                    try {
-                        LocalDate by = LocalDate.parse(parts[3]);
-                        t = new Deadline(desc, by);
-                    } catch (DateTimeParseException e) {
-                        continue; // malformed date → skip the line
-                    }
-                    break;
-                case "E":
-                    String from = parts.length >= 4 ? parts[3] : "unspecified";
-                    String to = parts.length >= 5 ? parts[4] : "unspecified";
-                    t = new Event(desc, from, to);
-                    break;
-                default:
-                    continue; // unknown → skip
-                }
-
-                if (done) {
-                    t.markDone();
-                }
-                if (count < dest.length) {
-                    dest[count++] = t;
-                } else {
+                if (count >= dest.length) {
                     break; // capacity reached
                 }
+                dest[count++] = t;
             }
             return count;
+
         } catch (IOException e) {
-            // Real I/O failure → surface to UI via typed exception
             throw new StorageException("Unable to load tasks from " + file + ": " + e.getMessage(), e);
         } catch (SecurityException se) {
             throw new StorageException(
                     "Security manager prevented file access for " + file + ": " + se.getMessage(), se);
         }
+    }
+
+    /**
+     * Ensures the data file exists and is readable.
+     */
+    private void prepareAndValidateDataFile() throws IOException {
+        ensureParentDir();
+
+        if (Files.notExists(file)) {
+            Files.createFile(file); // first run
+            return;
+        }
+        if (Files.isDirectory(file)) {
+            throw new StorageException("Data path points to a directory, not a file: " + file);
+        }
+        if (!Files.isReadable(file)) {
+            throw new StorageException("Data file is not readable: " + file);
+        }
+    }
+
+    /**
+     * Parses one persisted line into a Task. Returns null for blank/corrupted lines.
+     * This method keeps all persistence-specific parsing in one place.
+     */
+    private Task parseLineToTask(String raw) {
+        if (raw == null || raw.trim().isEmpty()) {
+            return null;
+        }
+        String[] parts = raw.split("\\s*\\|\\s*"); // tolerate spaces around '|'
+        if (parts.length < 3) {
+            return null; // corrupted → skip
+        }
+
+        String type = parts[0];
+        boolean done = "1".equals(parts[1]);
+        String desc = parts[2];
+
+        Task t;
+        switch (type) {
+        case "T":
+            t = new Todo(desc);
+            break;
+        case "D":
+            if (parts.length < 4) {
+                return null; // corrupted → skip
+            }
+            try {
+                LocalDate by = LocalDate.parse(parts[3]);
+                t = new Deadline(desc, by);
+            } catch (DateTimeParseException e) {
+                return null; // malformed date → skip the line
+            }
+            break;
+        case "E":
+            String from = parts.length >= 4 ? parts[3] : "unspecified";
+            String to = parts.length >= 5 ? parts[4] : "unspecified";
+            t = new Event(desc, from, to);
+            break;
+        default:
+            return null; // unknown → skip
+        }
+
+        if (done) {
+            t.markDone();
+        }
+        return t;
     }
 
     /**
