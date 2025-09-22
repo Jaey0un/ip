@@ -17,10 +17,6 @@ shadowJar {
     archiveClassifier = null
 }
 
-repositories {
-    mavenCentral()
-}
-
 dependencies {
     String javaFxVersion = '17.0.7'
 
