@@ -142,4 +142,19 @@ public final class Parser {
         }
         return keyword;
     }
+
+    /**
+     * Returns true if the input is a sort command.
+     */
+    public static boolean isSort(String input) {
+        return input.startsWith("sort");
+    }
+
+    /**
+     * Extracts the sort type keyword that follows the {@code sort} command.
+     * E.g. "sort deadline" returns "deadline"
+     */
+    public static String parseSortType(String input) {
+        return input.length() > 4 ? input.substring(4).trim() : "";
+    }
 }
