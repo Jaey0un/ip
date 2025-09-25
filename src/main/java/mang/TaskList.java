@@ -66,8 +66,13 @@ public class TaskList {
      * @throws IllegalArgumentException If the index is out of bounds.
      */
     public Task mark(int oneBasedIndex) {
+        // The index must be >= 1 (document important assumption)
+        assert oneBasedIndex > 0 : "Index must be > 0";
         int i = oneBasedIndex - 1;
         validateIndex(oneBasedIndex);
+
+        // The task at the index must not be null
+        assert tasks[i] != null : "Task at index must not be null";
         tasks[i].markDone();
         return tasks[i];
     }
@@ -80,8 +85,13 @@ public class TaskList {
      * @throws IllegalArgumentException If the index is out of bounds.
      */
     public Task unmark(int oneBasedIndex) {
+        // The index must be >= 1 (document important assumption)
+        assert oneBasedIndex > 0 : "Index must be > 0";
         int i = oneBasedIndex - 1;
         validateIndex(oneBasedIndex);
+
+        // The task at the index must not be null
+        assert tasks[i] != null : "Task at index must not be null";
         tasks[i].markUndone();
         return tasks[i];
     }
