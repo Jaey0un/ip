@@ -1,6 +1,6 @@
 # Mang User Guide
 
-![Ui](Ui.png)
+![Ui](docs/Ui.png)
 
 Mang is a friendly, lightweight chatbot that helps you manage your tasks from a simple command-line or JavaFX GUI
 interface.  
