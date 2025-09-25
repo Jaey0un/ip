@@ -55,21 +55,15 @@ public class Mang {
                 Task t = tasks.unmark(idx);
                 persistGui();
                 return "OK, I've marked this task as not done yet:\n  " + t;
-
+                // ↓↓↓ duplicated add logic refactored into addTask() ↓↓↓
             } else if (input.startsWith("todo")) {
-                Task t = tasks.add(Parser.parseTodo(input));
-                persistGui();
-                return formatAdded(t);
+                return addTask(Parser.parseTodo(input));
 
             } else if (input.startsWith("deadline")) {
-                Task t = tasks.add(Parser.parseDeadline(input)); // parseDeadline 사용
-                persistGui();
-                return formatAdded(t);
+                return addTask(Parser.parseDeadline(input));
 
             } else if (input.startsWith("event")) {
-                Task t = tasks.add(Parser.parseEvent(input)); // parseEvent 사용
-                persistGui();
-                return formatAdded(t);
+                return addTask(Parser.parseEvent(input));
 
             } else if (Parser.startsWith(input, "delete")) {
                 int idx = Parser.parseIndexAfter(input, "delete");
@@ -100,6 +94,18 @@ public class Mang {
         } catch (Exception e) {
             return "OOPS! " + e.getMessage(); // 예외 메시지를 문자열로 반환
         }
+    }
+
+    /**
+     * Helper method extracted from getResponse() with the help of ChatGPT
+     * to reduce duplication when adding tasks.
+     *
+     * @param t the Task to add
+     * @return the formatted string to show to the user
+     */
+    private String addTask(Task t) {
+        persistGui();
+        return formatAdded(t);
     }
 
     // Convert the methods of the Ui class to string return types
@@ -187,12 +193,18 @@ public class Mang {
                     ui.showAdded(t, tasks.size());
 
                 } else if (input.startsWith("deadline")) {
-                    Task t = tasks.add(Parser.parseTodo(input));
+                    // FIX: Previously CLI was wrongly using parseTodo() for deadlines.
+                    //      Updated to use Parser.parseDeadline() for consistency with GUI.
+                    //      Change done with the help of ChatGPT (AI-assisted coding).
+                    Task t = tasks.add(Parser.parseDeadline(input));
                     persist(storage, tasks, ui);
                     ui.showAdded(t, tasks.size());
 
                 } else if (input.startsWith("event")) {
-                    Task t = tasks.add(Parser.parseTodo(input));
+                    // FIX: Previously CLI was wrongly using parseTodo() for events.
+                    //      Updated to use Parser.parseEvent() for consistency with GUI.
+                    //      Change done with the help of ChatGPT (AI-assisted coding).
+                    Task t = tasks.add(Parser.parseEvent(input));
                     persist(storage, tasks, ui);
                     ui.showAdded(t, tasks.size());
 
