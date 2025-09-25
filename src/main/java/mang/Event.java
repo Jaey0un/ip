@@ -17,6 +17,9 @@ public class Event extends Task {
     @SuppressWarnings("checkstyle:Regexp")
     public Event(String description, String from, String to) {
         super(description);
+        // The start and end times must not be null
+        assert from != null : "Event start time must not be null";
+        assert to != null : "Event end time must not be null";
         this.from = from;
         this.to = to;
     }
