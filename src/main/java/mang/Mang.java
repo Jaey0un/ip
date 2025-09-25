@@ -104,6 +104,7 @@ public class Mang {
      * @return the formatted string to show to the user
      */
     private String addTask(Task t) {
+        Task added = tasks.add(t);
         persistGui();
         return formatAdded(t);
     }
@@ -137,7 +138,7 @@ public class Mang {
     }
 
     /**
-     * 작업을 파일에 저장합니다.
+     * Save your work to a file.
      */
     private void persistGui() throws StorageException {
         storage.save(tasks.backingArray(), tasks.size());
