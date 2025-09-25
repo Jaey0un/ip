@@ -1,6 +1,8 @@
 package mang;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -146,5 +148,36 @@ public class TaskList {
             }
         }
         return matches.toArray(new Task[0]);
+    }
+
+    /**
+     * Sorts tasks in the list by description alphabetically.
+     * (You can later change comparator to sort by deadline if desired.)
+     */
+    public void sortByDescription() {
+        Arrays.sort(tasks, 0, count, Comparator.comparing(Task::getDescription, String.CASE_INSENSITIVE_ORDER));
+    }
+
+    /**
+     * Sorts tasks in the list by deadline (only applicable to Deadline tasks).
+     * Non-Deadline tasks will appear last.
+     */
+    public void sortByDeadline() {
+        Arrays.sort(tasks, 0, count, (t1, t2) -> {
+            // Both are Deadline
+            if (t1 instanceof Deadline && t2 instanceof Deadline) {
+                return ((Deadline) t1).getBy().compareTo(((Deadline) t2).getBy());
+            }
+            // t1 is Deadline, t2 is not
+            if (t1 instanceof Deadline) {
+                return -1;
+            }
+            // t2 is Deadline, t1 is not
+            if (t2 instanceof Deadline) {
+                return 1;
+            }
+            // Neither is Deadline
+            return t1.getDescription().compareToIgnoreCase(t2.getDescription());
+        });
     }
 }

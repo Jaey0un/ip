@@ -83,6 +83,17 @@ public class Mang {
                 Task[] found = tasks.find(keyword);
                 return formatFound(found);
 
+            } else if (Parser.isSort(input)) {
+                String sortType = Parser.parseSortType(input);
+                if ("deadline".equalsIgnoreCase(sortType)) {
+                    tasks.sortByDeadline();
+                    persistGui();
+                    return "Tasks have been sorted by deadline.\n" + formatList();
+                } else {
+                    tasks.sortByDescription();
+                    persistGui();
+                    return "Tasks have been sorted by description.\n" + formatList();
+                }
             } else {
                 throw new UnsupportedOperationException("Unknown command: " + input);
             }
